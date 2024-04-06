@@ -54,7 +54,7 @@ export default function StarRating({
         {Array.from({ length: maxRating }, (_, i) => (
           <Star
             key={i}
-            onRate={() => setRating(i + 1)}
+            onRate={() => handleRating(i + 1)}
             full={hoverRating ? hoverRating >= i + 1 : rating >= i + 1}
             onHoverIn={() => setHoverRating(i + 1)}
             onHoverOut={() => setHoverRating(0)}
