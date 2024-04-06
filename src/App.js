@@ -48,26 +48,44 @@ const tempWatchedData = [
 ];
 
 const KEY = "615779e3";
-const query = "interstellar";
+const query = "123123";
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 // Structural Component
+// Error handling : check for offline connection, check for invalid query
 export default function App() {
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [movies, setMovies] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     async function fetchMovies() {
-      setIsLoading(true);
-      const res = await fetch(
-        `https://www.omdbapi.com/?s=${query}&apikey=${KEY}`
-      );
-      const data = await res.json();
-      setIsLoading(false);
-      setMovies(data.Search);
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `https://www.omdbapi.com/?s=${query}&apikey=${KEY}`
+        );
+        // Check if the res is fetched successfully
+        if (!res.ok) {
+          throw new Error(res.error);
+        }
+
+        const data = await res.json();
+        // Check if the query was valid (data.Response === "False")
+        if (data.Response === "False") {
+          throw new Error("Movie not found");
+        }
+
+        setMovies(data.Search);
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
     fetchMovies();
   }, []);
@@ -80,7 +98,14 @@ export default function App() {
       </NavBar>
 
       <Main>
-        <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box>
+        <Box>
+          {/*First, check if an error was thrown*/}
+          {error && <ErrorMessage message={error} />}
+          {/*Second, check if it is loading*/}
+          {isLoading && <Loader />}
+          {/*Third, check if it is done loading and no error was thrown*/}
+          {!isLoading && !error && <MovieList movies={movies} />}
+        </Box>
         <Box>
           <WatchedSummary watched={watched} />
           <WatchedMoviesList watched={watched} />
@@ -92,6 +117,15 @@ export default function App() {
 
 function Loader() {
   return <p className="loader">Loading...</p>;
+}
+
+function ErrorMessage({ message }) {
+  return (
+    <p className="error">
+      <span>❌</span>
+      {message}
+    </p>
+  );
 }
 
 // NavBar section //
