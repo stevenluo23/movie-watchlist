@@ -43,31 +43,35 @@ export default function App() {
   };
 
   useEffect(() => {
+    const controller = new AbortController();
     async function fetchMovies() {
       try {
         setIsLoading(true);
         // On query change, reset the error message
         setErrorMsg("");
+        // Attach the controller to the fetch request
         const res = await fetch(
-          `https://www.omdbapi.com/?s=${query.trimEnd()}&apikey=${KEY}`
+          `https://www.omdbapi.com/?s=${query.trimEnd()}&apikey=${KEY}`,
+          { signal: controller.signal }
         );
 
         // Check if the res is fetched successfully
         if (!res.ok) {
-          console.log(res);
           throw new Error(res.ErrorMessage);
         }
 
         const data = await res.json();
         // Check if the query was valid (data.Response === "False")
         if (data.Response === "False") {
-          console.log(data);
           throw new Error(data.Error);
         }
 
         setMovies(data.Search);
+        setErrorMsg("");
       } catch (err) {
-        setErrorMsg(err.message);
+        if (err.name !== "AbortError") {
+          setErrorMsg(err.message);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -77,7 +81,14 @@ export default function App() {
       setErrorMsg("");
       // Essential to clear the movies array when the query is less than 3 characters
       setMovies([]);
-    } else if (query) fetchMovies();
+      return;
+    }
+    handleCloseMovie();
+    fetchMovies();
+    return () => {
+      // Abort the fetch request when the query changes
+      controller.abort();
+    };
   }, [query]);
 
   return (

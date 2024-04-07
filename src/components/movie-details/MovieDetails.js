@@ -34,6 +34,19 @@ export default function MovieDetails({
     onCloseMovie();
   };
 
+  // Esc key to close the movie details (placed to avoid listening whenever a movie was not selected)
+  useEffect(() => {
+    const callback = (e) => {
+      if (e.key === "Escape") {
+        onCloseMovie();
+      }
+    };
+    document.addEventListener("keydown", callback);
+    return () => {
+      document.removeEventListener("keydown", callback);
+    };
+  }, [onCloseMovie]);
+
   useEffect(() => {
     async function getMovieDetails() {
       setIsLoading(true);
@@ -50,6 +63,10 @@ export default function MovieDetails({
   useEffect(() => {
     if (!movie.Title) return;
     document.title = `Movie | ${movie.Title}`;
+
+    return () => {
+      document.title = "Movie Watchlist";
+    };
   }, [movie.Title]);
 
   return (
