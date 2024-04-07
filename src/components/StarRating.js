@@ -43,9 +43,7 @@ export default function StarRating({
   const handleRating = (rating) => {
     setRating(rating);
     // updates external state assuming we use props as a component api
-    if (onSetRating) {
-      onSetRating(rating);
-    }
+    onSetRating(rating);
   };
 
   return (
@@ -114,15 +112,3 @@ function Star({ onRate, full, onHoverIn, onHoverOut, color, size }) {
     </span>
   );
 }
-
-/*
-FULL STAR
-
-
-
-
-EMPTY STAR
-
-
-
-*/
