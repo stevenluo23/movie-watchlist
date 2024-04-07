@@ -48,7 +48,6 @@ const tempWatchedData = [
 ];
 
 const KEY = "615779e3";
-const query = "123123";
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
@@ -56,18 +55,22 @@ const average = (arr) =>
 // Structural Component
 // Error handling : check for offline connection, check for invalid query
 export default function App() {
+  const [query, setQuery] = useState("");
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [movies, setMovies] = useState([]);
-  const [error, setError] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     async function fetchMovies() {
       try {
         setIsLoading(true);
+        // On query change, reset the error message
+        setErrorMsg("");
         const res = await fetch(
-          `https://www.omdbapi.com/?s=${query}&apikey=${KEY}`
+          `https://www.omdbapi.com/?s=${query.trimEnd()}&apikey=${KEY}`
         );
+
         // Check if the res is fetched successfully
         if (!res.ok) {
           throw new Error(res.error);
@@ -82,29 +85,34 @@ export default function App() {
         setMovies(data.Search);
       } catch (err) {
         console.error(err);
-        setError(err.message);
+        setErrorMsg(err.message);
       } finally {
         setIsLoading(false);
       }
     }
-    fetchMovies();
-  }, []);
+    // Prevent error msg when the query is less than 3 characters
+    if (query.length < 3) {
+      setErrorMsg("");
+      // Essential to clear the movies array when the query is less than 3 characters
+      setMovies([]);
+    } else fetchMovies();
+  }, [query]);
 
   return (
     <>
       <NavBar>
-        <Search />
+        <Search query={query} setQuery={setQuery} />
         <NumResults movies={movies} />
       </NavBar>
 
       <Main>
         <Box>
           {/*First, check if an error was thrown*/}
-          {error && <ErrorMessage message={error} />}
+          {errorMsg && <ErrorMessage message={errorMsg} />}
           {/*Second, check if it is loading*/}
           {isLoading && <Loader />}
           {/*Third, check if it is done loading and no error was thrown*/}
-          {!isLoading && !error && <MovieList movies={movies} />}
+          {!isLoading && !errorMsg && <MovieList movies={movies} />}
         </Box>
         <Box>
           <WatchedSummary watched={watched} />
@@ -150,9 +158,7 @@ function NumResults({ movies }) {
 }
 
 // Stateless component
-function Search() {
-  const [query, setQuery] = useState("");
-
+function Search({ query, setQuery }) {
   return (
     <input
       className="search"
