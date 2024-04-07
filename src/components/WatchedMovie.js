@@ -1,6 +1,6 @@
 // Stateless component
 import noImg from "../images/noImg.jpg";
-export function WatchedMovie({ movie }) {
+export function WatchedMovie({ movie, onDeleteWatched }) {
   console.log(movie);
   return (
     <li>
@@ -20,8 +20,14 @@ export function WatchedMovie({ movie }) {
         </p>
         <p>
           <span>⏳</span>
-          <span>{!movie.runtime ? 0 : movie.runtime} min</span>
+          <span>{movie.runtime} min</span>
         </p>
+        <button
+          className="btn-delete"
+          onClick={() => onDeleteWatched(movie.imdbID)}
+        >
+          X
+        </button>
       </div>
     </li>
   );

@@ -4,10 +4,21 @@ import { KEY } from "../App";
 import { Loader } from "./Loader";
 import noImg from "../images/noImg.jpg";
 
-export function MovieDetails({ selectedId, onCloseMovie, onAddWatched }) {
+export function MovieDetails({
+  watched,
+  selectedId,
+  onCloseMovie,
+  onAddWatched,
+}) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState("");
+
+  const isWatched = watched.some((item) => item.imdbID === selectedId);
+
+  const watchedUserRating = watched.find(
+    (item) => item.imdbID === selectedId
+  )?.userRating;
 
   const handleAdd = () => {
     const newWatchedMovie = {
@@ -44,8 +55,11 @@ export function MovieDetails({ selectedId, onCloseMovie, onAddWatched }) {
         <>
           <MovieStats onCloseMovie={onCloseMovie} movie={movie} />
           <MovieDescription
+            watchedUserRating={watchedUserRating}
+            isWatched={isWatched}
             handleAdd={handleAdd}
             movie={movie}
+            userRating={userRating}
             onSetUserRating={setUserRating}
           />
         </>
@@ -80,13 +94,34 @@ function MovieStats({ onCloseMovie, movie }) {
   );
 }
 
-function MovieDescription({ handleAdd, movie, onSetUserRating }) {
+function MovieDescription({
+  watchedUserRating,
+  isWatched,
+  handleAdd,
+  movie,
+  userRating,
+  onSetUserRating,
+}) {
   return (
     <section>
-      <StarRating maxRating={10} size={24} onSetRating={onSetUserRating} />
-      <button className="btn-add" onClick={handleAdd}>
-        + Add to list
-      </button>
+      <div className="rating">
+        {isWatched ? (
+          <p>You've rated this {watchedUserRating} ⭐'s</p>
+        ) : (
+          <>
+            <StarRating
+              maxRating={10}
+              size={24}
+              onSetRating={onSetUserRating}
+            />
+            {userRating > 0 && (
+              <button className="btn-add" onClick={handleAdd}>
+                + Add to list
+              </button>
+            )}
+          </>
+        )}
+      </div>
       <p>
         <em>{movie.Plot}</em>
       </p>
