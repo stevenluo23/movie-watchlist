@@ -13,8 +13,7 @@ export default function MovieStats({ onCloseMovie, movie }) {
       <div className="details-overview">
         <h2>{movie.Title}</h2>
         <p>
-          {movie.Released} &bull;{" "}
-          {movie.Runtime === "N/A" ? "0 min" : movie.Runtime}
+          {movie.Released} &bull; {movie.Runtime}
         </p>
         <p>{movie.Genre}</p>
         <p>

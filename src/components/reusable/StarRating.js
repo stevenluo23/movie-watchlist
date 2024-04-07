@@ -5,10 +5,14 @@ const containerStyle = {
   display: "flex",
   alignItems: "center",
   gap: "16px",
+  width: "100%",
+  height: "100%",
 };
 
 const starContainerStyle = {
   display: "flex",
+  width: "90%",
+  height: "90%",
 };
 
 StarRating.propTypes = {

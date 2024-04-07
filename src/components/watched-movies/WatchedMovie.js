@@ -11,7 +11,7 @@ export default function WatchedMovie({ movie, onDeleteWatched }) {
       <div>
         <p>
           <span>⭐️</span>
-          <span>{movie.imdbRating}</span>
+          <span>{movie.imdbRating || "N/A"}</span>
         </p>
         <p>
           <span>🌟</span>
@@ -19,7 +19,7 @@ export default function WatchedMovie({ movie, onDeleteWatched }) {
         </p>
         <p>
           <span>⏳</span>
-          <span>{movie.runtime} min</span>
+          <span>{movie.runtime || "N/A"} min</span>
         </p>
         <button
           className="btn-delete"
