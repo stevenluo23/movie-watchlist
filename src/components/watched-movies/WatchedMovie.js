@@ -1,7 +1,6 @@
 // Stateless component
-import noImg from "../images/noImg.jpg";
-export function WatchedMovie({ movie, onDeleteWatched }) {
-  console.log(movie);
+import noImg from "../../images/noImg.jpg";
+export default function WatchedMovie({ movie, onDeleteWatched }) {
   return (
     <li>
       <img

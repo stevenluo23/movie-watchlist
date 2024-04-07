@@ -1,7 +1,7 @@
-import { WatchedMovie } from "./WatchedMovie";
+import WatchedMovie from "./WatchedMovie";
 
 // Stateless component
-export function WatchedMoviesList({ watched, onDeleteWatched }) {
+export default function WatchedMoviesList({ watched, onDeleteWatched }) {
   return (
     <ul className="list">
       {watched.map((movie, i) => (

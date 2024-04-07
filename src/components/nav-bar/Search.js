@@ -1,5 +1,5 @@
 // Stateless component
-export function Search({ query, setQuery }) {
+export default function Search({ query, setQuery }) {
   return (
     <input
       className="search"

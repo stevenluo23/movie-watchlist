@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { WatchedMoviesList } from "./components/WatchedMoviesList";
-import { WatchedSummary } from "./components/WatchedSummary";
-import { MovieDetails } from "./components/MovieDetails";
-import { MovieList } from "./components/MovieList";
-import { Box } from "./components/Box";
-import { Main } from "./components/Main";
-import { Search } from "./components/Search";
-import { NumResults } from "./components/NumResults";
-import { NavBar } from "./components/NavBar";
-import { ErrorMessage } from "./components/ErrorMessage";
-import { Loader } from "./components/Loader";
+import ErrorMessage from "./components/error-loading/ErrorMessage";
+import Loader from "./components/error-loading/Loader";
+import MovieList from "./components/movie-list/MovieList";
+import MovieDetails from "./components/movie-details/MovieDetails";
+import WatchedSummary from "./components/watched-movies/WatchedSummary";
+import WatchedMoviesList from "./components/watched-movies/WatchedMoviesList";
+import NavBar from "./components/nav-bar/NavBar";
+import Search from "./components/nav-bar/Search";
+import NumResults from "./components/nav-bar/NumResults";
+import Main from "./components/structural/Main";
+import Box from "./components/structural/Box";
 
 export const KEY = "615779e3";
 
@@ -54,19 +54,19 @@ export default function App() {
 
         // Check if the res is fetched successfully
         if (!res.ok) {
+          console.log(res);
           throw new Error(res.ErrorMessage);
         }
 
         const data = await res.json();
         // Check if the query was valid (data.Response === "False")
         if (data.Response === "False") {
+          console.log(data);
           throw new Error(data.Error);
         }
 
         setMovies(data.Search);
-        console.log(data.Search);
       } catch (err) {
-        console.error(err);
         setErrorMsg(err.message);
       } finally {
         setIsLoading(false);
@@ -77,7 +77,7 @@ export default function App() {
       setErrorMsg("");
       // Essential to clear the movies array when the query is less than 3 characters
       setMovies([]);
-    } else fetchMovies();
+    } else if (query) fetchMovies();
   }, [query]);
 
   return (

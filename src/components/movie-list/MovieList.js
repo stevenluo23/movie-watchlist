@@ -1,7 +1,7 @@
-import { Movie } from "./Movie";
+import Movie from "./Movie";
 
 // Stateful component
-export function MovieList({ movies, onSelectMovie, onCloseMovie }) {
+export default function MovieList({ movies, onSelectMovie, onCloseMovie }) {
   return (
     <ul className="list list-movies">
       {movies?.map((movie) => (

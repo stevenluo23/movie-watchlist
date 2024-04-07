@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // Stateful component
-export function Box({ children }) {
+export default function Box({ children }) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (

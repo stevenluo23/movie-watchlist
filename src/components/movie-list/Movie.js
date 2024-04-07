@@ -1,6 +1,6 @@
 // Stateless component
-import noImg from "../images/noImg.jpg";
-export function Movie({ movie, onSelectMovie }) {
+import noImg from "../../images/noImg.jpg";
+export default function Movie({ movie, onSelectMovie }) {
   return (
     <li onClick={() => onSelectMovie(movie.imdbID)}>
       <img
