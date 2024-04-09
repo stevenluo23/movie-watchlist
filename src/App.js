@@ -20,7 +20,9 @@ export const average = (arr) =>
 // Error handling : check for offline connection, check for invalid query
 export default function App() {
   const [query, setQuery] = useState("");
-  const [watched, setWatched] = useState([]);
+  const [watched, setWatched] = useState(() =>
+    JSON.parse(localStorage.getItem("watched"))
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [movies, setMovies] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
@@ -90,6 +92,11 @@ export default function App() {
       controller.abort();
     };
   }, [query]);
+
+  // Update local storage with watched movies everytime a new watched movie is added
+  useEffect(() => {
+    localStorage.setItem("watched", JSON.stringify(watched));
+  }, [watched]);
 
   return (
     <>
