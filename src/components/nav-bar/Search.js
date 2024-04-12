@@ -22,7 +22,7 @@ export default function Search({ query, setQuery, setSelectedId }) {
       // Ref for focusing the input element
       ref={inputEl}
       // Focus on mount
-      autofocus="true"
+      autoFocus="true"
     />
   );
 }
