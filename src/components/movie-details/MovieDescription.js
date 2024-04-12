@@ -1,4 +1,4 @@
-import StarRating from "../reusable/StarRating";
+import StarRating from "../reusable-components/StarRating";
 
 export default function MovieDescription({
   watchedUserRating,

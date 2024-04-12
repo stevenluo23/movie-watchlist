@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useMovies } from "./components/hooks/useMovies";
+import { useLocalStorageState } from "./components/hooks/useLocalStorageState";
 import ErrorMessage from "./components/error-loading/ErrorMessage";
 import Loader from "./components/error-loading/Loader";
 import MovieList from "./components/movie-list/MovieList";
@@ -20,12 +22,8 @@ export const average = (arr) =>
 // Error handling : check for offline connection, check for invalid query
 export default function App() {
   const [query, setQuery] = useState("");
-  const [watched, setWatched] = useState(() =>
-    JSON.parse(localStorage.getItem("watched"))
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [movies, setMovies] = useState([]);
-  const [errorMsg, setErrorMsg] = useState("");
+  // Initialize watched movies with local storage (empty array used to initalize watched on mount for an empty local storage)
+  const [watched, setWatched] = useLocalStorageState([], "watched");
   const [selectedId, setSelectedId] = useState(null);
 
   const handleSelectMovie = (curId) => {
@@ -44,64 +42,17 @@ export default function App() {
     setWatched(watched.filter((movie) => movie.imdbID !== id));
   };
 
-  useEffect(() => {
-    const controller = new AbortController();
-    async function fetchMovies() {
-      try {
-        setIsLoading(true);
-        // On query change, reset the error message
-        setErrorMsg("");
-        // Attach the controller to the fetch request
-        const res = await fetch(
-          `https://www.omdbapi.com/?s=${query.trimEnd()}&apikey=${KEY}`,
-          { signal: controller.signal }
-        );
-
-        // Check if the res is fetched successfully
-        if (!res.ok) {
-          throw new Error(res.ErrorMessage);
-        }
-
-        const data = await res.json();
-        // Check if the query was valid (data.Response === "False")
-        if (data.Response === "False") {
-          throw new Error(data.Error);
-        }
-
-        setMovies(data.Search);
-        setErrorMsg("");
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          setErrorMsg(err.message);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    // Prevent error msg when the query is less than 3 characters
-    if (query.length < 3) {
-      setErrorMsg("");
-      // Essential to clear the movies array when the query is less than 3 characters
-      setMovies([]);
-      return;
-    }
-    handleCloseMovie();
-    fetchMovies();
-    return () => {
-      // Abort the fetch request when the query changes
-      controller.abort();
-    };
-  }, [query]);
-
-  // Update local storage with watched movies everytime a new watched movie is added
-  useEffect(() => {
-    localStorage.setItem("watched", JSON.stringify(watched));
-  }, [watched]);
+  // Custom hook to fetch current movies being searched
+  const { movies, isLoading, errorMsg } = useMovies(query);
 
   return (
     <>
       <NavBar>
-        <Search query={query} setQuery={setQuery} />
+        <Search
+          query={query}
+          setQuery={setQuery}
+          setSelectedId={setSelectedId}
+        />
         <NumResults movies={movies} />
       </NavBar>
 
