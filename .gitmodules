@@ -1,0 +1,3 @@
+[submodule "movie-watchlist"]
+	path = movie-watchlist
+	url = https://github.com/stevenluo23/movie-watchlist.git
